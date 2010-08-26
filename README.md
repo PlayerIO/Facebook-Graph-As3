@@ -29,14 +29,17 @@ the same.
 The following methods are supported in this library:
 
 - **FB.api(...)** 
+
   API requests via Facebook Graph or the old REST interface.
  
 - **FB.ui(...)**
+
   Showing various Facebook interface elements on the containing
   webpage. Notice that this method requires that the official
   Facebook Javascript SDK is included on the containing page. 	
   
 - **FB.Data.* (FQL Support)**
+
   FQL queries including support for execution of multiple
   dependent queries in one request.
   
@@ -103,7 +106,7 @@ http://developers.facebook.com/docs/reference/javascript/FB.init
 		trace(FB.toString(response)); 
 	})
 	
-# *FB.Data.* (FQL Support)*
+# FB.Data.* (FQL Support)
 Support for the executing Facebook Queries and reading their
 results.
 
