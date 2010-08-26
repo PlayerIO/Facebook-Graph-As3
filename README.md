@@ -44,7 +44,7 @@ In addition, a simple FB.toString() method is added that
 pretty-prints a given object or array in a JSON-alike
 fashion.
 	
-### FB.api()
+# FB.api()
 Make a API call to the Facebook Graph API.
 
 The FB.api() method works exactly the same as the one in the
@@ -55,31 +55,31 @@ http://developers.facebook.com/docs/reference/javascript/FB.api
 
 Here is some sample usage of the method:
 
-# Loading yourself:
+### Loading yourself:
 
 	FB.api('/me', function(response:*) : void {
 		trace(FB.toString(response));
 	})
 	
-# Or your friends:
+### Or your friends:
 
 	FB.api({method: 'friends.get'}, function(response:*) : void {
 		trace(FB.toString(response));
 	})
 
-# Posting:
+### Posting:
 
 	FB.api('/me/feed', 'post', { body: "message goes here" }, function(response:*) : void {
 		trace(FB.toString(response));
 	})
 	
-# An old REST method call:
+### An old REST method call:
 
 	FB.api({method: 'links.getStats',urls: 'facebook.com,developers.facebook.com'},	function(response:*) : void {
 		trace('Total: ' + (response[0].total_count + response[1].total_count));
 	})
 	
-### FB.ui()
+# FB.ui()
 Method for triggering UI interaction with Facebook as iframe dialogs 
 or popups, like publishing to the stream, sharing links.
 
@@ -97,13 +97,13 @@ Go here for information on how to include the Javascript SDK
 in the containing page:
 http://developers.facebook.com/docs/reference/javascript/FB.init
 
-# sample usage:
+### sample usage:
   
 	FB.ui({method: 'stream.share',u: 'http://www.playerio.com/'}, function(response) : void { 
 		trace(FB.toString(response)); 
 	})
 	
-### *FB.Data.* (FQL Support)*
+# *FB.Data.* (FQL Support)*
 Support for the executing Facebook Queries and reading their
 results.
 
@@ -113,14 +113,14 @@ be directly applicable to this library:
 
 http://developers.facebook.com/docs/reference/javascript/FB.Data.query
 
-# Getting name and uid of a user
+### Getting name and uid of a user
 
 	var query:FBQuery = FB.Data.query('select name, uid from user where uid={0}',user_id);
 	query.wait(function(rows:Array) : void {
 		trace(FB.toString(rows)); 
 	},null);
 	
-# Error handling
+### Error handling
 
 	var query:FBQuery = FB.Data.query('select non_existing_column from user where uid={0}',1);
 	query.wait(function(rows:Array) : void {
@@ -129,7 +129,7 @@ http://developers.facebook.com/docs/reference/javascript/FB.Data.query
 		trace("error: "+error);
 	});
 	
-# Dependent queries
+### Dependent queries
 
 	var query:FBQuery = FB.Data.query('select username from page where page_id = 6815841748');
 	var dependentQuery:FBQuery = FB.Data.query('select mr_president from page where username in (select username from {0})', query);
@@ -141,7 +141,7 @@ http://developers.facebook.com/docs/reference/javascript/FB.Data.query
 		trace("error: " + e);
 	});
 	
-# Heavily dependent queries
+### Heavily dependent queries
 
 	// First, get ten of the logged-in user's friends and the events they
 	// are attending. In this query, the argument is just an int value
