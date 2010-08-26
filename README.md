@@ -23,20 +23,20 @@ api, you shuld also specify your Facebook Application ID:
 	FB.init({ access_token:'...', app_id:'...', debug:true })
 	
 The library is ported from the official Facebook Javascript
-SDK and the methods, arguments and callbacks should work
+SDK so the methods, arguments and callbacks should work
 the same.
 
 The following methods are supported in this library:
 
-- *FB.api(...)* 
+- **FB.api(...)** 
   API requests via Facebook Graph or the old REST interface.
  
-- *FB.ui(...)*
+- **FB.ui(...)**
   Showing various Facebook interface elements on the containing
   webpage. Notice that this method requires that the official
   Facebook Javascript SDK is included on the containing page. 	
   
-- *FB.Data.* (FQL Support)*
+- **FB.Data.* (FQL Support)**
   FQL queries including support for execution of multiple
   dependent queries in one request.
   
