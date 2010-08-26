@@ -19,7 +19,6 @@
 package Facebook{
 	import flash.events.*;
 	import flash.external.*;
-	import flash.net.*;
 	import flash.system.*;
 	import flash.utils.*;
 

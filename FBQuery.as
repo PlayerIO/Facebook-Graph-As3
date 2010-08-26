@@ -128,8 +128,7 @@ package Facebook{
 		 * @returns {Object} parsed where clause
 		 */
 		private function _parseWhere(s:String) : Object {
-			// First check if the where is of pattern
-			// key = XYZ
+			// First check if the where is of pattern key = XYZ
 			var re:Object = (/^\s*(\w+)\s*=\s*(.*)\s*$/i).exec(s);
 			var result:Object = null;
 			var value:* = null;

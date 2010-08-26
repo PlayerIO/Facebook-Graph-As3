@@ -161,7 +161,6 @@ package Facebook{
 				}
 			}
 			
-			
 			// Now make a single multi-query API call
 			var params:Object = { method: 'fql.multiquery', queries: {} };
 			FB.objCopy(params.queries, mqueries, true, function(query:FBQuery) : String {
