@@ -21,7 +21,6 @@ package Facebook{
 	import flash.external.*;
 	import flash.net.*;
 	import flash.system.*;
-
 	
 	public class FB{
 		private static var allowedMethods:Object = {GET:1,POST:1,'DELETE':1,PUT:1};
@@ -97,7 +96,7 @@ package Facebook{
 			return initUI() == null;
 		}
 		
-		/**
+		/** 
 		 * Method for triggering UI interaction with Facebook as iframe dialogs or popups, like publishing to the stream, sharing links.
 		 * 
 		 * <p>Here is a sample of getting the /me resource via the Graph API<br>
