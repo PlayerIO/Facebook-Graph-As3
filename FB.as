@@ -1,5 +1,8 @@
 /**
- * Copyright Player.IO (www.player.io)
+ * Player.IO (www.player.io).
+ *  
+ * Ported from the Facebook Javascript SDK:
+ * http://github.com/facebook/connect-js
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +22,7 @@ package Facebook{
 	import flash.net.*;
 	import flash.system.*;
 
+	
 	public class FB{
 		private static var allowedMethods:Object = {GET:1,POST:1,'DELETE':1,PUT:1};
 		private static var readOnlyCalls:Object = {fql_query:1,fql_multiquery:1,friends_get:1,notifications_get:1,stream_get:1,users_getinfo:1}
@@ -27,7 +31,11 @@ package Facebook{
 		private static var debug:Boolean = false;
 		private static var uiFlashId:String = null;
 		private static var uiCallbackId:Number = 0;
+		private static var data:FBData = new FBData();
 		
+		public static function get Data() : FBData { return data; }
+		
+	
 		/** 
 		 * Initialize the Facebook API with a Facebook access_token
 		 * 
@@ -242,7 +250,8 @@ package Facebook{
 			var loader:URLLoader = new URLLoader();
 			loader.addEventListener(Event.COMPLETE, function(e:Event):void{
 				var json:String = loader.data;
-	
+				
+				trace("data: " + loader.data)
 				// if the response is a JSONP response, remove the callback
 				// so we can deal with the json inside. 
 				if( json.length > 2 && json.substring(0,2)=='c(' ){ // JSONP
@@ -314,6 +323,189 @@ package Facebook{
 				default:
 					return obj+'';
 					break;
+			}
+		}
+		
+		
+		// -------------------------------------------
+		private static var _formatRE:RegExp = /(\{[^\}^\{]+\})/g;
+		private static var _trimRE:RegExp = /^\s*|\s*$/g;
+		private static var _quoteRE:RegExp = /["\\\x00-\x1f\x7f-\x9f]/g;
+		
+		/**
+		 * Strip leading and trailing whitespace.
+		 *
+		 * @param s {String} the string to trim
+		 * @returns {String} the trimmed string
+		 */
+		internal static function stringTrim(s:String) : String {
+			return s.replace(_trimRE, '');
+		}
+		
+		/**
+		 * Format a string.
+		 *
+		 * Example:
+		 *     FB.String.format('{0}.facebook.com/{1}', 'www', 'login.php')
+		 * Returns:
+		 *     'www.facebook.com/login.php'
+		 *
+		 * Example:
+		 *     FB.String.format('foo {0}, {1}, {0}', 'x', 'y')
+		 * Returns:
+		 *     'foo x, y, x'
+		 *
+		 * @static
+		 * @param format {String} the format specifier
+		 * @param arguments {...} placeholder arguments
+		 * @returns {String} the formatted string
+		 */
+		internal static function stringFormat(format:String, ...args) : String {
+			// var values = arguments;
+			return format.replace(_formatRE, function(str:String, m:String,index:int,completeString:String) : String{
+				var	index:int = parseInt(m.substr(1), 10);
+				var value:* = args[index];
+				if (value === null || typeof(value) == 'undefined') {
+					return '';
+				}
+				return value.toString();
+			});
+		}
+		
+		/**
+		 * Escape an string so that it can be embedded inside another string
+		 * as quoted string.
+		 *
+		 * @param value {String} string to quote
+		 * @return {String} an quoted string
+		 */
+		internal static function stringQuote(value:String) : String {
+			var	subst:Object = {    // table of character substitutions
+				'\b': '\\b',
+				'\t': '\\t',
+				'\n': '\\n',
+				'\f': '\\f',
+				'\r': '\\r',
+				'"' : '\\"',
+				'\\': '\\\\'
+			};
+			
+			return _quoteRE.test(value) ?
+				'"' + value.replace(_quoteRE, function (a:String) : String {
+					var c:String = subst[a];
+					if (c) {
+						return c;
+					}
+					c = a.charCodeAt();
+					return '\\u00' + Math.floor(c/16).toString(16) + (c % 16).toString(16);
+				}) + '"' 
+				: '"' + value + '"';
+		}
+		
+		/**
+		 * Get index of item inside an array. Return's -1 if element is not found.
+		 *
+		 * @param arr {Array} Array to look through.
+		 * @param item {Object} Item to locate.
+		 * @return {Number} Index of item.
+		 */
+		internal static function arrayIndexOf(arr:Array, item:*) : int {
+			var length:uint = arr.length;
+			if (length) {
+				for (var index:int = 0; index < length; index++) {
+					if (arr[index] === item) {
+						return index;
+					}
+				}
+			}
+			return -1;
+		}
+		
+		/**
+		 * Merge items from source into target, but only if they dont exist. Returns
+		 * the target array back.
+		 *
+		 * @param target {Array} Target array.
+		 * @param source {Array} Source array.
+		 * @return {Array} Merged array.
+		 */
+		internal static function arrayMerge(target:Array, source:Array) : Array {
+			for (var i:int=0; i < source.length; i++) {
+				if (arrayIndexOf(target, source[i]) < 0) {
+					target.push(source[i]);
+				}
+			}
+			return target;
+		}
+		
+		/**
+		 * Create an array by performing transformation on the items in a source
+		 * array.
+		 *
+		 * @param arr {Array} Source array.
+		 * @param transform {Function} Transformation function.
+		 * @return {Array} The transformed array.
+		 */
+		internal static function arrayMap(arr:Array, transform:Function) : Array{
+			var ret:Array = [];
+			for (var i:int=0; i < arr.length; i++) {
+				ret.push(transform(arr[i]));
+			}
+			return ret;
+		}
+		
+		
+		/**
+		 * Create an new array from the given array and a filter function.
+		 *
+		 * @param arr {Array} Source array.
+		 * @param fn {Function} Filter callback function.
+		 * @return {Array} Filtered array.
+		 */
+		internal static function arrayFilter(arr:Array, fn:Function) : Array {
+			var b:Array = [];
+			for (var i:int=0; i < arr.length; i++) {
+				if (fn(arr[i])) {
+					b.push(arr[i]);
+				}
+			}
+			return b;
+		}
+		
+		/**
+		 * Copies things from source into target.
+		 *
+		 * @access private
+		 * @param target    {Object}  the target object where things will be copied
+		 *                            into
+		 * @param source    {Object}  the source object where things will be copied
+		 *                            from
+		 * @param overwrite {Boolean} indicate if existing items should be
+		 *                            overwritten
+		 * @param tranform  {function} [Optional], transformation function for
+		 *        each item
+		 */
+		internal static function objCopy(target:Object, source:Object, overwrite:Boolean, transform:Function) : Object {
+			for (var key:String in source) {
+				if (overwrite || typeof( target[key] ) == 'undefined') {
+					target[key] = typeof(transform) == 'function' ? transform(source[key]) :  source[key];
+				}
+			}
+			return target;
+		}
+		
+		internal static function forEach(item:*, fn:Function) : void {
+			if(!item)return;
+			
+			if( item is Array){
+				for(var i:uint=0;i!=item.length;i++){
+					fn(item[i], i, item);
+				}
+				
+			}else if(item is Object){
+				for(var x:* in item){
+					fn(item[x], x, item);
+				}
 			}
 		}
 	}
