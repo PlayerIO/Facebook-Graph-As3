@@ -250,7 +250,6 @@ package Facebook{
 			loader.addEventListener(Event.COMPLETE, function(e:Event):void{
 				var json:String = loader.data;
 				
-				trace("data: " + loader.data)
 				// if the response is a JSONP response, remove the callback
 				// so we can deal with the json inside. 
 				if( json.length > 2 && json.substring(0,2)=='c(' ){ // JSONP
